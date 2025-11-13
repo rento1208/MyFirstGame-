@@ -1,4 +1,6 @@
-#include "GameObject.h"
+﻿#include "GameObject.h"
+#include "SphereCollider.h"
+#include <Windows.h>
 
 GameObject::GameObject()
 	:pParent_(nullptr)
@@ -20,9 +22,9 @@ GameObject::~GameObject()
 
 void GameObject::DrawSub()
 {
-	//0.������`��
+	//0.自分を描画
 	Draw();
-	//1.�q�I�u�W�F�N�g��`�� childList_�̊e�v�f�ɑ΂���Draw���Ă�
+	//1.子オブジェクトを描画 childList_の各要素に対してDrawを呼ぶ
 	//for (auto itr = childList_.begin(); itr != childList_.end(); itr++)
 	//{
 	//	(*itr)->DrawSub();
@@ -62,7 +64,7 @@ void GameObject::UpdateSub()
 
 void GameObject::ReleaseSub()
 {
-	this->Release();//���������
+	this->Release();//自分を解放
 	for (auto child : childList_)
 	{
 		child->ReleaseSub();
@@ -87,7 +89,7 @@ GameObject* GameObject::GetRootJob()
 {
 	if (pParent_ == nullptr)
 	{
-		return this;//RootJob����
+		return this;//RootJobだよ
 	}
 	else
 	{
@@ -100,7 +102,7 @@ GameObject* GameObject::FindChildObject(const string& name)
 {
 	if (this->objectName_ == name)
 	{
-		return this;//�������T����Ă���
+		return this;//自分が探されていた
 	}
 	else
 	{
@@ -109,10 +111,10 @@ GameObject* GameObject::FindChildObject(const string& name)
 			GameObject* result = child->FindChildObject(name);
 			if (result != nullptr)
 			{
-				return result;;//��������
+				return result;;//見つかった
 			}
 		}
-		return nullptr;//������Ȃ�����
+		return nullptr;//見つからなかった
 	}
 }
 
@@ -121,4 +123,42 @@ GameObject* GameObject::FindObject(const string& name)
 	GameObject* rootJob = GetRootJob();
 	GameObject* result = rootJob->FindChildObject(name);
 	return result;
+}
+
+void GameObject::AddCollider(SphereCollider* pCollider)
+{
+	pCollider_ = pCollider;
+}
+
+void GameObject::Collision(GameObject* pTarget)
+{
+	//this->pCollier_とpTarget->pCollider_はぶつかってますか？
+	//⓪閾値＝お互いの半径＋半径
+	float thisR = this->pCollider_->GetRadius();
+	float tgtR = pTarget->pCollider_->GetRadius();
+	float thre = (thisR + tgtR) * (thisR + tgtR);
+	//①２つのコライダーの距離計算をする
+	XMFLOAT3 thisP = this->transform_.position_;
+	XMFLOAT3 tgtP = pTarget->transform_.position_;
+	float dist = (thisP.x - tgtP.x) * (thisP.x - tgtP.x) +
+		(thisP.y - tgtP.y) * (thisP.y - tgtP.y) +
+		(thisP.z - tgtP.z) * (thisP.z - tgtP.z);
+	//②コライダー同士が交差していたら
+	if (dist <= thre) {
+		
+		//③なんかする
+		MessageBoxA(0, "ぶつかった", "Collider", MB_OK);
+	}
+
+}
+
+void GameObject::RoundRobin(GameObject* pTarget)
+{//①自分にコライダーがなかったらreturn
+	if (pCollider_ == nullptr)
+		return;
+	if (pTarget->pCollider_ != nullptr)
+		Collision(pTarget);
+	//③再帰的なやつで、ターゲットの子オブジェクトを当たり判定してく
+	for (auto itr : pTarget->childList_)
+		RoundRobin(itr);
 }
