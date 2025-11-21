@@ -33,9 +33,14 @@ public:
 	GameObject* GetRootJob();
 	GameObject* FindChildObject(const string& name);
 	GameObject* FindObject(const string& name);
+	GameObject* GetRootScene();
 	void AddCollider(SphereCollider* pCollider);
 	void Collision(GameObject* pTarget);
 	void RoundRobin(GameObject* pTarget);
+	virtual void onCollision(GameObject* pTarget) {}
+	const std::string& GetName() const { return objectName_; }
+
+
 
 	template<class T>
 	GameObject* Instantiate(GameObject* parent)

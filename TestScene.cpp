@@ -3,6 +3,7 @@
 #include "Engine/Model.h"
 #include "Engine/Input.h"
 
+
 TestScene::TestScene(GameObject* parent)
 	:GameObject(parent, "TestScene"),m_hModel(-1)
 {
@@ -50,6 +51,7 @@ void TestScene::Update()
 
 void TestScene::Draw()
 {
+   
    
     if (m_hModel >= 0)
     {

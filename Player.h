@@ -24,5 +24,7 @@ private:
     ChildOden* pRChildOden_;
     ChildOden* pLChildOden_;
 
+    void FireBullet();
+
 };
 

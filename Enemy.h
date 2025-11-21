@@ -19,4 +19,6 @@ public:
     void Draw() override;
     //ŠJ•ú
     void Release() override;
+
+    virtual void onCollision(GameObject* pTarget) override;
 };

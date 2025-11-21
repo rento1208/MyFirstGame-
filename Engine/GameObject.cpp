@@ -2,18 +2,19 @@
 #include "SphereCollider.h"
 #include <Windows.h>
 
+
 GameObject::GameObject()
-	:pParent_(nullptr)
+          :pParent_(nullptr), objectName_("GameObject"), isDead_(false)
 {
 }
 
-GameObject::GameObject(GameObject* parent, const string& name)
-	:pParent_(parent), objectName_(name), isDead_(false)
+GameObject::GameObject(GameObject* parent, const std::string& name)
+           : pParent_(parent), objectName_(name), isDead_(false)
 {
-	if (parent != nullptr)
-	{
-		transform_.pParent_ = &(parent->transform_);
-	}
+    if (pParent_ != nullptr)
+    {
+      transform_.pParent_ = &(pParent_->transform_);
+    }
 }
 
 GameObject::~GameObject()
@@ -22,143 +23,224 @@ GameObject::~GameObject()
 
 void GameObject::DrawSub()
 {
-	//0.自分を描画
-	Draw();
-	//1.子オブジェクトを描画 childList_の各要素に対してDrawを呼ぶ
-	//for (auto itr = childList_.begin(); itr != childList_.end(); itr++)
-	//{
-	//	(*itr)->DrawSub();
-	//}
+    Draw();
+
 	for (auto child : childList_)
 	{
 		child->DrawSub();
-	}
+    }
 }
 
 void GameObject::UpdateSub()
 {
-
 	transform_.Calculation();
+
 	this->Update();
+
+	RoundRobin(GetRootJob());
 	for (auto child : childList_)
 	{
 		child->UpdateSub();
 	}
 
-	for (auto itr = childList_.begin(); itr != childList_.end(); )
+	for (auto it = childList_.begin(); it != childList_.end(); )
 	{
-		if ((*itr)->isDead_)
+		if ((*it)->isDead_)
 		{
-			(*itr)->ReleaseSub();
-			delete (*itr);
-			itr = childList_.erase(itr);
+			(*it)->ReleaseSub();
+			delete (*it);
+			it = childList_.erase(it); // ← eraseの戻り値を必ず使う
 		}
 		else
 		{
-			++itr;
+			++it;
 		}
 	}
-
-
 }
 
 void GameObject::ReleaseSub()
 {
-	this->Release();//自分を解放
+
+	this->Release();
+
 	for (auto child : childList_)
+
 	{
+
 		child->ReleaseSub();
+
+		delete child;
+
 	}
+
+	childList_.clear();
+
 }
+
 void GameObject::SetPosition(XMFLOAT3 position)
+
 {
+
 	transform_.position_ = position;
+
 }
 
 void GameObject::SetPosition(float x, float y, float z)
+
 {
-	SetPosition(XMFLOAT3(x, y, z));
+
+	transform_.position_ = { x,y,z };
+
 }
 
 void GameObject::KillMe()
+
 {
+
 	isDead_ = true;
+
 }
 
 GameObject* GameObject::GetRootJob()
+
 {
+
 	if (pParent_ == nullptr)
+
 	{
-		return this;//RootJobだよ
+
+		return this;
+
 	}
+
 	else
+
 	{
+
 		return pParent_->GetRootJob();
+
 	}
 
 }
 
-GameObject* GameObject::FindChildObject(const string& name)
+GameObject* GameObject::FindChildObject(const std::string& name)
+
 {
+
 	if (this->objectName_ == name)
+
 	{
-		return this;//自分が探されていた
+
+		return this;
+
 	}
+
 	else
+
 	{
+
 		for (auto child : childList_)
+
 		{
+
 			GameObject* result = child->FindChildObject(name);
+
 			if (result != nullptr)
+
 			{
-				return result;;//見つかった
+
+				return result;
+
 			}
+
 		}
-		return nullptr;//見つからなかった
+
 	}
+
+	return nullptr;
+
 }
 
-GameObject* GameObject::FindObject(const string& name)
+GameObject* GameObject::FindObject(const std::string& name)
+
 {
+
 	GameObject* rootJob = GetRootJob();
+
 	GameObject* result = rootJob->FindChildObject(name);
+
 	return result;
+
+
+
+}
+
+GameObject* GameObject::GetRootScene()
+{
+	GameObject* current = this;
+	while (current->pParent_ != nullptr)
+	{
+		current = current->pParent_;
+	}
+	return current;
 }
 
 void GameObject::AddCollider(SphereCollider* pCollider)
+
 {
+
 	pCollider_ = pCollider;
+
 }
 
 void GameObject::Collision(GameObject* pTarget)
 {
-	//this->pCollier_とpTarget->pCollider_はぶつかってますか？
-	//⓪閾値＝お互いの半径＋半径
-	float thisR = this->pCollider_->GetRadius();
+	if (!pCollider_ || !pTarget->pCollider_) return;
+
+	float thisR = pCollider_->GetRadius();
 	float tgtR = pTarget->pCollider_->GetRadius();
 	float thre = (thisR + tgtR) * (thisR + tgtR);
-	//①２つのコライダーの距離計算をする
-	XMFLOAT3 thisP = this->transform_.position_;
+
+	XMFLOAT3 thisP = transform_.position_;
 	XMFLOAT3 tgtP = pTarget->transform_.position_;
-	float dist = (thisP.x - tgtP.x) * (thisP.x - tgtP.x) +
+
+	float dist =
+		(thisP.x - tgtP.x) * (thisP.x - tgtP.x) +
 		(thisP.y - tgtP.y) * (thisP.y - tgtP.y) +
 		(thisP.z - tgtP.z) * (thisP.z - tgtP.z);
-	//②コライダー同士が交差していたら
-	if (dist <= thre) {
-		
-		//③なんかする
-		MessageBoxA(0, "ぶつかった", "Collider", MB_OK);
+
+	if (dist <= thre)
+	{
+		// コールバックを先に呼ぶ
+		this->onCollision(pTarget);
+		pTarget->onCollision(this);
+
+		// 弾→敵
+		if (objectName_ == "Bullet" && pTarget->objectName_ == "Enemy")
+		{
+			KillMe();
+			pTarget->KillMe();
+		}
+
+		// 敵→弾
+		if (objectName_ == "Enemy" && pTarget->objectName_ == "Bullet")
+		{
+			KillMe();
+			pTarget->KillMe();
+		}
 	}
-
 }
+void GameObject::RoundRobin(GameObject* target)
+{
+	if (!pCollider_) return;
 
-void GameObject::RoundRobin(GameObject* pTarget)
-{//①自分にコライダーがなかったらreturn
-	if (pCollider_ == nullptr)
-		return;
-	if (pTarget->pCollider_ != nullptr)
-		Collision(pTarget);
-	//③再帰的なやつで、ターゲットの子オブジェクトを当たり判定してく
-	for (auto itr : pTarget->childList_)
-		RoundRobin(itr);
+	// 対象と自分の衝突
+	if (target->pCollider_ && target != this)
+		Collision(target);
+
+	// ターゲットの子すべてを調べる
+	for (auto child : target->childList_)
+	{
+		RoundRobin(child);
+	}
 }

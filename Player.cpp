@@ -3,6 +3,7 @@
 #include "Engine/Model.h"
 #include "ChildOden.h"
 #include "Engine/Input.h"
+#include "Bullet.h"
 
 Player::Player(GameObject* parent)
 	:GameObject(parent,"Player"),hModel(-1)
@@ -16,11 +17,9 @@ Player::~Player()
 
 void Player::Initialize()
 {
-	/*pFbx_ = new Fbx;*/
-	/*if (pFbx_ == nullptr)*/
 
 	hModel = Model::Load("oden.fbx");
-	assert(hModel >= 0);
+	if (hModel < 0) return;
 	
 	/*pFbx_->Load("Oden.fbx");*/
 	transform_.scale_.x = 0.7f;
@@ -41,25 +40,29 @@ void Player::Initialize()
 
 void Player::Update()
 {
-
 	static float x = 0.0;
 	float tx = sin(x) * 5.0f;
 	x += 0.02f;
 	//transform_.position_.x = tx;
 	transform_.rotate_.y += 1.0f;
-	if (Input::IsKey(DIK_SPACE))
+	if (Input::IsKey(DIK_D))
 	{
-		transform_.position_.z += 0.2f;
+		transform_.position_.x += 0.2f;
 	}
-	
-}
+	else if (Input::IsKey(DIK_A))
+	{
+		transform_.position_.x -= 0.2f;
+	}
+	else if (Input::IsKey(DIK_SPACE))
+	{
+		FireBullet();
+	}
+
+};
 
 void Player::Draw()
 {
-	/*if (pFbx_)
-	{
-		pFbx_->Draw(transform_);
-	}*/
+	
 	Model::SetTransform(hModel, transform_);
 	Model::Draw(hModel);
 }
@@ -73,4 +76,16 @@ void Player::Release()
 		pFbx_ = nullptr;
 
 	}*/
+}
+
+void Player::FireBullet()
+{
+	//Bulletをプレイヤーの親の親に生成する
+	Bullet* b = dynamic_cast<Bullet*>(Instantiate<Bullet>(GetParent()->GetParent()));
+
+	//弾の発射位置をプレイヤーの前に合わせる
+	b->SetPosition(
+		transform_.position_.x,
+		transform_.position_.y,
+		transform_.position_.z + 2.0f);  //ちょっと前
 }
