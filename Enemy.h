@@ -21,4 +21,8 @@ public:
     void Release() override;
 
     virtual void onCollision(GameObject* pTarget) override;
+private:
+    float moveTime_;          // ŠÔŒo‰ß
+    float moveAmplitude_;     // ˆÚ“®•
+    float moveSpeed_;         // ˆÚ“®‘¬“x
 };

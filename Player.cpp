@@ -23,9 +23,9 @@ void Player::Initialize()
 	if (hModel < 0) return;
 	
 	/*pFbx_->Load("Oden.fbx");*/
-	transform_.scale_.x = 0.7f;
-	transform_.scale_.y = 0.7f;
-	transform_.scale_.z = 0.7f;
+	transform_.scale_.x = 0.4f;
+	transform_.scale_.y = 0.4f;
+	transform_.scale_.z = 0.4f;
 
 	//子オブジェクトにChildOdenを追加する
 	pRChildOden_ = (ChildOden*)Instantiate<ChildOden>(this);
