@@ -28,12 +28,12 @@ Bullet::Bullet(GameObject* parent)
 void Bullet::Initialize()
 {
     //ƒ‚ƒfƒ‹“Ç‚İ‚İ
-    hModel = Model::Load("oden.fbx");
+    hModel = Model::Load("Bullet.fbx");
     assert(hModel >= 0);
-    transform_.scale_ = { 0.1f, 0.1f, 0.1f };
+    transform_.scale_ = { 1.0f,1.0f,1.0f };
 
     //’e‚ÌÕ“Ë”»’è‚ğ’Ç‰Á
-    SphereCollider* col = new SphereCollider(0.3f);
+    SphereCollider* col = new SphereCollider(0.5f);
     AddCollider(col);
 }
 

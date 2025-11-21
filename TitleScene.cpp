@@ -1,19 +1,19 @@
-#include "TestScene.h"
+#include "TitleScene.h"
 #include "Engine/SceneManager.h"
 #include "Engine/Model.h"
 #include "Engine/Input.h"
 
 
-TestScene::TestScene(GameObject* parent)
-	:GameObject(parent, "TestScene"),m_hModel(-1)
+TitleScene::TitleScene(GameObject* parent)
+	:GameObject(parent, "TitleScene"),m_hModel(-1)
 {
 }
 
-TestScene::~TestScene()
+TitleScene::~TitleScene()
 {
 }
 
-void TestScene::Initialize()
+void TitleScene::Initialize()
 {
     // モデルの読み込み
     m_hModel = Model::Load("Oden.fbx");
@@ -27,14 +27,14 @@ void TestScene::Initialize()
     Model::SetTransform(m_hModel, transform);
 }
 
-void TestScene::Update()
+void TitleScene::Update()
 {
     
 
     //スペースキー押したら 
     // SceneManager::ChangeScene(SCENE_ID_PLAY); を呼び出してね
    // スペースキー押したらシーン遷移
-    if (Input::IsKeyDown(DIK_SPACE))
+    if (Input::IsKeyDown(DIK_T))
     {
         // 親（SceneManager）を取得してシーン変更
         SceneManager* pManager = dynamic_cast<SceneManager*>(GetParent());
@@ -49,7 +49,7 @@ void TestScene::Update()
     
 }
 
-void TestScene::Draw()
+void TitleScene::Draw()
 {
    
    
@@ -59,7 +59,7 @@ void TestScene::Draw()
     }
 }
 
-void TestScene::Release()
+void TitleScene::Release()
 {
     Model::Release();
 }

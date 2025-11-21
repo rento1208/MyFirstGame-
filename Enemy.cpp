@@ -37,13 +37,5 @@ void Enemy::Release()
 
 void Enemy::onCollision(GameObject* pTarget)
 {
-	if (pTarget->GetName() == "Bullet")
-	{
-		KillMe();
-		SceneManager* sceneMgr = dynamic_cast<SceneManager*>(GetRootScene());
-		if (sceneMgr)
-		{
-			sceneMgr->ChangeScene(SCENE_ID_RESULT);
-		}
-	}
+	
 }

@@ -1,7 +1,7 @@
 ﻿#include "Direct3D.h"
 #include "SceneManager.h"
 #include "../Player.h"
-#include "../TestScene.h"
+#include "../TitleScene.h"
 #include "../PlayScene.h"
 #include "../ResultScene.h"
 #include "Model.h"
@@ -17,9 +17,9 @@ SceneManager::~SceneManager()
 
 void SceneManager::Initialize()
 {
-	currentSceneID_ = SCENE_ID_TEST;
+	currentSceneID_ = SCENE_ID_TITLE;
 	nextSceneID_ = currentSceneID_;
-	Instantiate<TestScene>(this);
+	Instantiate<TitleScene>(this);
 }
 
 void SceneManager::Update()
@@ -38,8 +38,8 @@ void SceneManager::Update()
 		case SCENE_ID_PLAY:
 			Instantiate<PlayScene>(this);
 			break;
-		case SCENE_ID_TEST:
-			Instantiate<TestScene>(this);
+		case SCENE_ID_TITLE:
+			Instantiate<TitleScene>(this);
 			break;
 		case SCENE_ID_RESULT:
 			Instantiate<ResultScene>(this);

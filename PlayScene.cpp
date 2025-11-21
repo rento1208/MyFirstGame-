@@ -1,4 +1,5 @@
 #include "PlayScene.h"
+#include "Engine/SceneManager.h"
 #include "Player.h"
 #include "Enemy.h"
 
@@ -27,7 +28,13 @@ void PlayScene::Initialize()
 
 void PlayScene::Update()
 {
-	
+	//Enemy‚ªÁ‚¦‚½‚çResultScene‚ÉØ‚è‘Ö‚¦‚éˆ—‚ð’Ç‰Á‚·‚é
+	GameObject* pEnemy = FindChildObject("Enemy");
+	if (pEnemy == nullptr) {
+		//Enemy‚ª‚¢‚È‚¢¨‘S–Å‚µ‚Ä‚¢‚é
+		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+		pSceneManager->ChangeScene(SCENE_ID_RESULT);
+	}
 }
 
 void PlayScene::Draw()
@@ -36,4 +43,5 @@ void PlayScene::Draw()
 
 void PlayScene::Release()
 {
+
 }

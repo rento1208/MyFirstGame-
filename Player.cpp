@@ -19,6 +19,7 @@ void Player::Initialize()
 {
 
 	hModel = Model::Load("oden.fbx");
+	
 	if (hModel < 0) return;
 	
 	/*pFbx_->Load("Oden.fbx");*/

@@ -75,7 +75,7 @@
     <ClInclude Include="Engine\Model.h">
       <Filter>ソース ファイル\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="TestScene.h">
+    <ClInclude Include="TitleScene.h">
       <Filter>ソース ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\SceneManager.h">
@@ -140,7 +140,7 @@
     <ClCompile Include="Engine\Model.cpp">
       <Filter>ソース ファイル\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="TestScene.cpp">
+    <ClCompile Include="TitleScene.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\SceneManager.cpp">
