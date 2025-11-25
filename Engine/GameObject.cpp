@@ -4,7 +4,7 @@
 
 
 GameObject::GameObject()
-          :pParent_(nullptr), objectName_("GameObject"), isDead_(false)
+	:pParent_(nullptr), objectName_("GameObject"), isDead_(false)
 {
 }
 
@@ -33,10 +33,9 @@ void GameObject::DrawSub()
 
 void GameObject::UpdateSub()
 {
+	
 	transform_.Calculation();
-
 	this->Update();
-
 	RoundRobin(GetRootJob());
 	for (auto child : childList_)
 	{
@@ -60,105 +59,67 @@ void GameObject::UpdateSub()
 
 void GameObject::ReleaseSub()
 {
-
 	this->Release();
 
 	for (auto child : childList_)
-
 	{
-
 		child->ReleaseSub();
-
 		delete child;
-
 	}
-
 	childList_.clear();
-
 }
 
 void GameObject::SetPosition(XMFLOAT3 position)
-
 {
-
 	transform_.position_ = position;
-
 }
+
 
 void GameObject::SetPosition(float x, float y, float z)
-
 {
-
 	transform_.position_ = { x,y,z };
-
 }
+
 
 void GameObject::KillMe()
-
 {
-
 	isDead_ = true;
-
 }
+
 
 GameObject* GameObject::GetRootJob()
-
 {
-
 	if (pParent_ == nullptr)
-
 	{
-
 		return this;
-
 	}
-
 	else
-
 	{
-
 		return pParent_->GetRootJob();
-
 	}
-
 }
 
+
 GameObject* GameObject::FindChildObject(const std::string& name)
-
 {
-
 	if (this->objectName_ == name)
-
 	{
-
 		return this;
-
 	}
 
 	else
-
 	{
-
 		for (auto child : childList_)
-
 		{
-
 			GameObject* result = child->FindChildObject(name);
-
+			
 			if (result != nullptr)
-
 			{
-
 				return result;
-
 			}
-
 		}
-
 	}
-
 	return nullptr;
-
 }
 
 GameObject* GameObject::FindObject(const std::string& name)
@@ -244,3 +205,4 @@ void GameObject::RoundRobin(GameObject* target)
 		RoundRobin(child);
 	}
 }
+

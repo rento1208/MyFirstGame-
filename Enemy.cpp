@@ -13,19 +13,20 @@ Enemy::~Enemy()
 {
 }
 
-void Enemy::Initialize()
-{
+void Enemy::Initialize()  
+{  
 	pFbx = new Fbx;
 	pFbx->Load("oden.fbx");
 	transform_.position_ = { 0.0f, 0.0f, 70.0f };
 
-	// 移動パラメータ初期化
-	moveTime_ = 0.0f;
-	moveAmplitude_ = 30.0f;   // 左右±20動く
-	moveSpeed_ = 0.02f;        // 動くスピード
 
-	SphereCollider* col = new SphereCollider(2.0f);
-	AddCollider(col);
+   // 移動パラメータ初期化  
+   moveTime_ = 0.0f;  
+   moveAmplitude_ = 30.0f;   // 左右±20動く  
+   moveSpeed_ = 0.02f;        // 動くスピード  
+
+   SphereCollider* col = new SphereCollider(2.0f);  
+   AddCollider(col);  
 }
 
 void Enemy::Update()
@@ -42,9 +43,7 @@ void Enemy::Draw()
 
 void Enemy::Release()
 {
+
 }
 
-void Enemy::onCollision(GameObject* pTarget)
-{
-	
-}
+

@@ -37,11 +37,15 @@ public:
 	void AddCollider(SphereCollider* pCollider);
 	void Collision(GameObject* pTarget);
 	void RoundRobin(GameObject* pTarget);
+	
+    protected:  
 	virtual void onCollision(GameObject* pTarget) {}
 	const std::string& GetName() const { return objectName_; }
 
 
 
+    protected:  
+    GameObject* parent_; // "parent_" フィールドを追加
 	template<class T>
 	GameObject* Instantiate(GameObject* parent)
 	{
